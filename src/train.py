@@ -46,8 +46,8 @@ if __name__ == "__main__":
 
     # Training config
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(params=model.parameters(), lr=0.003)
-    lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.5)
+    optimizer = optim.Adam(params=model.parameters(), lr=0.001)
+    lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.75)
 
     # Move to adequate processor
     if torch.cuda.is_available():

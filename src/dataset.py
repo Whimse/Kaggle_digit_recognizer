@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 class MNIST:
     def __init__(self):
+        batch_size = 64
         input_folder_path = "../data/"
         train_df = pd.read_csv("./data/train.csv")
         test_df = pd.read_csv("./data/test.csv")
@@ -38,9 +39,9 @@ class MNIST:
         #test
         test_images_tensor = torch.tensor(test_images)/255.0
 
-        self.train_loader = DataLoader(train_tensor, batch_size=16, num_workers=2, shuffle=True)
-        self.val_loader = DataLoader(val_tensor, batch_size=16, num_workers=2, shuffle=False)
-        self.test_loader = DataLoader(test_images_tensor, batch_size=16, num_workers=2, shuffle=False)
+        self.train_loader = DataLoader(train_tensor, batch_size=batch_size, num_workers=2, shuffle=True)
+        self.val_loader = DataLoader(val_tensor, batch_size=batch_size, num_workers=2, shuffle=False)
+        self.test_loader = DataLoader(test_images_tensor, batch_size=batch_size, num_workers=2, shuffle=False)
 
 '''
 # https://learnopencv.com/pytorch-for-beginners-image-classification-using-pre-trained-models/
