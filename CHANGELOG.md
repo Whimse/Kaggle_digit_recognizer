@@ -2,3 +2,5 @@
 - Added requirements.txt and README.md files
 - Created initial repo, pushed to Github
 - Several minor changes (evaluating inference time, tqdm)
+- Refactored dataset creation code, training and evaluation functions out of _train_nn.py_
+
