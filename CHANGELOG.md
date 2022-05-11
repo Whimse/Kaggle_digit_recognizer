@@ -1,0 +1,3 @@
+- Initialized code from notebook codebase at Kaggle: https://www.kaggle.com/code/franklemuchahary/mnist-digit-recognition-using-pytorch/notebook
+- Added requirements.txt and README.md files
+- Created initial repo, pushed to Github

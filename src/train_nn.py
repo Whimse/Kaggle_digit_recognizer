@@ -30,8 +30,6 @@ print("torch cuda available:", torch.cuda.is_available())
 print("CuDNN enabled:", torch.backends.cudnn.enabled)
 print("Device:", device)
 
-quit()
-
 input_folder_path = "../data/"
 train_df = pd.read_csv("./data/train.csv")
 test_df = pd.read_csv("./data/test.csv")
@@ -188,14 +186,14 @@ def make_predictions(data_loader):
     return test_preds
 
 
-num_epochs = 25
+num_epochs = 3
 
 for n in range(num_epochs):
     train_model(n)
     evaluate(val_loader)
 
 test_set_preds = make_predictions(test_loader)
-submission_df = pd.read_csv("../input/sample_submission.csv")
+submission_df = pd.read_csv("./data/sample_submission.csv")
 submission_df['Label'] = test_set_preds.numpy().squeeze()
 submission_df.head()
 submission_df.to_csv('submission.csv', index=False)
