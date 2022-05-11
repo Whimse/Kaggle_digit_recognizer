@@ -60,13 +60,6 @@ if __name__ == "__main__":
     with mlflow.start_run(run_name=args.model_name):
         for num_epoch in range(args.epochs):
             train(model, criterion, optimizer, lr_scheduler, dataset.train_loader, num_epoch)
-
-            print("****************")
-            import math
-            print(lr_scheduler.get_last_lr())
-            print("***", math.log(lr_scheduler.get_last_lr()[0]))
-            print("****************")
-            continue
             test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
             print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})\tSaving model: {best_val_error > val_error}')
             mlflow.log_metric("loss", loss, num_epoch)
