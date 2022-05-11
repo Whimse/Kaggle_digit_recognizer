@@ -63,34 +63,4 @@ for n in range(num_epochs):
         submission_df = pd.read_csv("./data/sample_submission.csv")
         submission_df['Label'] = test_set_preds.numpy().squeeze()
         submission_df.head()
-        submission_df.to_csv('submission.csv', index=False)
-
-# --------------------
-
-del model
-
-def make_predictions(data_loader):
-    model.eval()
-    test_preds = torch.LongTensor()
-    
-    for batch_idx, data in enumerate(data_loader):
-        data = data.unsqueeze(1)
-        
-        if torch.cuda.is_available():
-            data = data.cuda()
-
-        data = data.repeat(1, 3, 1, 1)
-        output = model(data)
-        
-        preds = output.cpu().data.max(1, keepdim=True)[1]
-        test_preds = torch.cat((test_preds, preds), dim=0)
-
-    return test_preds
-
-model = torch.load('model.pt')
-test_set_preds2 = make_predictions(dataset.test_loader)
-submission_df = pd.read_csv("./data/sample_submission.csv")
-submission_df['Label'] = test_set_preds2.numpy().squeeze()
-submission_df.head()
-submission_df.to_csv('submission_aux.csv', index=False)
-
+        submission_df.to_csv('submission_aux.csv', index=False)
