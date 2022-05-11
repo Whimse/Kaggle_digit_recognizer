@@ -34,8 +34,8 @@ def train(model, criterion, optimizer, lr_scheduler, loader, num_epoch):
             loss.backward()
             optimizer.step()
 
-            if batch_idx > 100:
-                break
+            #if batch_idx > 100:
+            #    break
 
     lr_scheduler.step()
 
