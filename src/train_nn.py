@@ -1,66 +1,62 @@
-#pytorch utility imports
-import torch
-import torchvision
-import torchvision.models as models
 
-#neural net imports
+# Import external libraries
+import argparse
+
+# Import torch
+import torch
+import torchvision.models as models
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-#import external libraries
-import os
-import pandas as pd
-import numpy as np
-import tqdm
-
+# Import data reading and other utilities
 from dataset import MNIST
 from utils import train, evaluate
 
-# Print models available
-print(dir(models))
+if __name__ == "__main__":
 
+    # Process command line parameters
+    parser = argparse.ArgumentParser(description='Train network for MNIST')
+    parser.add_argument('--model_name', choices=dir(models), default='resnet18', help='Model name')
+    parser.add_argument('--pretrained', type=bool, default=True, help='Load pretrained weights')
+    parser.add_argument('--epochs', type=int, default=1, help='Number of epochs to perform training')
+    args = parser.parse_args()
 
-if torch.cuda.is_available():
-    device = torch.device('cuda')
-else:
-    device = torch.device('cpu')
+    # Config parameters
+    print("Args:", args.model_name, args.epochs, args.pretrained)
 
-print("torch cuda available:", torch.cuda.is_available())
-print("CuDNN enabled:", torch.backends.cudnn.enabled)
-print("Device:", device)
+    # Detect GPU
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    else:
+        device = torch.device('cpu')
 
-# Dataset
-dataset = MNIST()
+    print("Torch cuda available:", torch.cuda.is_available())
+    print("CuDNN enabled:", torch.backends.cudnn.enabled)
 
-# Model
-model = models.mobilenet_v3_small(pretrained=True)
+    # Dataset
+    dataset = MNIST()
 
-# Training config
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(params=model.parameters(), lr=0.003)
-exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+    # Model
+    model = getattr(models, args.model_name)(pretrained=args.pretrained)
 
-# Move to adequate processor
-if torch.cuda.is_available():
-    model = model.cuda()
-    criterion = criterion.cuda()
+    # Training config
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(params=model.parameters(), lr=0.003)
+    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
 
-# Training loop
-num_epochs = 1
-best_val_error = 100.
+    # Move to adequate processor
+    if torch.cuda.is_available():
+        model = model.cuda()
+        criterion = criterion.cuda()
 
-for n in range(num_epochs):
-    train(model, criterion, optimizer, exp_lr_scheduler, dataset.train_loader, n)
-    test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
-    print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})\tSaving model: {best_val_error > val_error}')
-    if best_val_error > val_error:
-        best_val_error = val_error
-        torch.save(model, 'model.pt')
+    # Training loop
+    best_val_error = 100.
 
-        # Save predictions for this model
-        test_set_preds, __, __, mean_syn, std_syn = evaluate(model, dataset.test_loader)
-        submission_df = pd.read_csv("./data/sample_submission.csv")
-        submission_df['Label'] = test_set_preds.numpy().squeeze()
-        submission_df.head()
-        submission_df.to_csv('submission_aux.csv', index=False)
+    for n in range(args.epochs):
+        train(model, criterion, optimizer, exp_lr_scheduler, dataset.train_loader, n)
+        test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
+        print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})\tSaving model: {best_val_error > val_error}')
+        if best_val_error > val_error:
+            best_val_error = val_error
+            torch.save(model, f'model_{args.model_name}.pt')

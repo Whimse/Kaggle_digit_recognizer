@@ -34,9 +34,6 @@ def train(model, criterion, optimizer, exp_lr_scheduler, loader, num_epoch):
             loss.backward()
             optimizer.step()
 
-            if batch_idx > 50:
-                break
-
     exp_lr_scheduler.step()
 
 def evaluate(model, data_loader):

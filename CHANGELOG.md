@@ -4,4 +4,4 @@
 - Several minor changes (evaluating inference time, tqdm)
 - Refactored dataset creation code, training and evaluation functions out of _train_nn.py_
 - Refactored test code from _train_nn.py_ into _test_nn.py_
-
+- Added command line parameter parsing
