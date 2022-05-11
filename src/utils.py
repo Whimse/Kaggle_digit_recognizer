@@ -14,7 +14,7 @@ import pandas as pd
 import numpy as np
 import tqdm
 
-def train(model, criterion, optimizer, exp_lr_scheduler, loader, num_epoch):
+def train(model, criterion, optimizer, lr_scheduler, loader, num_epoch):
     model.train()
     
     with tqdm.tqdm(loader, desc=f"Epoch {num_epoch}", ncols=30, bar_format='{l_bar}{bar}|', leave=True) as pbar:
@@ -34,7 +34,10 @@ def train(model, criterion, optimizer, exp_lr_scheduler, loader, num_epoch):
             loss.backward()
             optimizer.step()
 
-    exp_lr_scheduler.step()
+            if batch_idx > 100:
+                break
+
+    lr_scheduler.step()
 
 def evaluate(model, data_loader):
     model.eval()
@@ -73,7 +76,7 @@ def evaluate(model, data_loader):
         try:
             # If target is not None
             loss += F.cross_entropy(output, target, size_average=False).item()
-            correct += pred.eq(target.data.cpu().view_as(pred)).sum()
+            correct += pred.eq(target.data.cpu().view_as(pred)).sum().item()
         except TypeError as e:
             # If target is None
             loss, correct = .0, .0

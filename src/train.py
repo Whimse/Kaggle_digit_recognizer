@@ -1,5 +1,6 @@
 
 # Import external libraries
+import os
 import argparse
 
 # Import torch
@@ -8,6 +9,9 @@ import torchvision.models as models
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+
+# Other libs
+import mlflow
 
 # Import data reading and other utilities
 from dataset import MNIST
@@ -43,7 +47,7 @@ if __name__ == "__main__":
     # Training config
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=model.parameters(), lr=0.003)
-    exp_lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+    lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.5)
 
     # Move to adequate processor
     if torch.cuda.is_available():
@@ -53,10 +57,26 @@ if __name__ == "__main__":
     # Training loop
     best_val_error = 100.
 
-    for n in range(args.epochs):
-        train(model, criterion, optimizer, exp_lr_scheduler, dataset.train_loader, n)
-        test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
-        print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})\tSaving model: {best_val_error > val_error}')
-        if best_val_error > val_error:
-            best_val_error = val_error
-            torch.save(model, f'model_{args.model_name}.pt')
+    with mlflow.start_run(run_name=args.model_name):
+        for num_epoch in range(args.epochs):
+            train(model, criterion, optimizer, lr_scheduler, dataset.train_loader, num_epoch)
+
+            print("****************")
+            import math
+            print(lr_scheduler.get_last_lr())
+            print("***", math.log(lr_scheduler.get_last_lr()[0]))
+            print("****************")
+            continue
+            test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
+            print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})\tSaving model: {best_val_error > val_error}')
+            mlflow.log_metric("loss", loss, num_epoch)
+            mlflow.log_metric("error", val_error, num_epoch)
+            if best_val_error > val_error:
+                best_val_error = val_error
+                # We could alternatively log the model in the MLflow experiment
+                # This way is more convenient for the purpose of the exercise
+                mlflow.pytorch.log_model(model, "model")
+
+# Evaluate final test set error
+test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
+print(f'FINAL - Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})')
