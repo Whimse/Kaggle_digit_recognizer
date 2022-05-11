@@ -19,6 +19,7 @@ from sklearn.model_selection import train_test_split
 import os
 import math
 #%matplotlib inline
+import tqdm
 
 
 if torch.cuda.is_available():
@@ -122,7 +123,8 @@ def train_model(num_epoch):
     conv_model.train()
     exp_lr_scheduler.step()
     
-    for batch_idx, (data, target) in enumerate(train_loader):
+    iterable = tqdm.tqdm(train_loader, desc="Training", ncols=80)
+    for batch_idx, (data, target) in enumerate(iterable):
         data = data.unsqueeze(1)
         data, target = data, target
         
@@ -135,18 +137,17 @@ def train_model(num_epoch):
         loss = criterion(output, target)
         loss.backward()
         optimizer.step()
-        
-        if (batch_idx + 1)% 100 == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                num_epoch, (batch_idx + 1) * len(data), len(train_loader.dataset),
-                100. * (batch_idx + 1) / len(train_loader), loss.item()))
-            
-def evaluate(data_loader):
+                    
+def evaluate(data_loader, num_epoch):
     conv_model.eval()
     loss = 0
     correct = 0
-    
-    for data, target in data_loader:
+
+    # To measure inference time    
+    starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+    timings=np.zeros((len(data_loader),1))
+
+    for batch_idx, (data, target) in enumerate(data_loader):
         data = data.unsqueeze(1)
         data, target = data, target
         
@@ -154,8 +155,13 @@ def evaluate(data_loader):
             data = data.cuda()
             target = target.cuda()
         
+        starter.record()    # Measure inference time
         output = conv_model(data)
-        
+        ender.record()      # Measure inference time
+
+        torch.cuda.synchronize()
+        timings[batch_idx] = starter.elapsed_time(ender)
+
         loss += F.cross_entropy(output, target, size_average=False).item()
 
         pred = output.data.max(1, keepdim=True)[1]
@@ -163,9 +169,11 @@ def evaluate(data_loader):
         
     loss /= len(data_loader.dataset)
         
-    print('\nAverage Val Loss: {:.4f}, Val Accuracy: {}/{} ({:.3f}%)\n'.format(
-        loss, correct, len(data_loader.dataset),
-        100. * correct / len(data_loader.dataset)))
+    val_error = 100. * (1.- correct / len(data_loader.dataset))
+    mean_syn = np.mean(timings)
+    std_syn = np.std(timings)
+
+    print(f'Epoch {num_epoch}\tVal loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})')
 
 
 def make_predictions(data_loader):
@@ -190,7 +198,7 @@ num_epochs = 3
 
 for n in range(num_epochs):
     train_model(n)
-    evaluate(val_loader)
+    evaluate(val_loader, n)
 
 test_set_preds = make_predictions(test_loader)
 submission_df = pd.read_csv("./data/sample_submission.csv")
