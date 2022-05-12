@@ -63,11 +63,22 @@ The first experiment explored the accuracy achievable by different network archi
 
 Resnet34, the network with top test accuracy, provided a 0.99403 accuracy, reaching position 267/2055 (top 12,99%) in the Kagge leaderboard for the _Digit Recognizer_ competition.
 
-| Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)  |
-|---|---|---|
-|   |   |   |
-|   |   |   |
-|   |   |   |
+| Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)&ast;  | Inference time (ms/batch) |
+|---                    |---        |---|---|
+| resnet18              | 0.607     |           | 0.1555    |
+| resnet34              | *0.536*   | 0.99403   | 0.2880    |
+| mobilenet_v2          | *0.536*   |           | 0.1907    |
+| mobilenet_v3_small    | 1.893     |           | 0.1742    |
+| mobilenet_v3_large    | 0.738     | 0.99060   | 0.2421    |
+| squeezenet1_0         | 0.667     |           | 0.0913    |
+| squeezenet1_1         | 1.19      |           | *0.1010*  |
+| efficientnet_b0       | 0.655     |           | 0.3589    |
+| efficientnet_b3       | 1.024     |           | 0.6917    |
+| mnasnet0_5            | 21.18     | 0.78892   | 0.1429    |
+| mnasnet1_0            | 1.238     |           | 0.2218    |
+
+&ast; Some of the fields in this column could not be completed due to submission limit per day imposed by Kaggle.
+
 
 ## Ensemble Prediction
 
