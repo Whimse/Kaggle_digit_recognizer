@@ -30,7 +30,7 @@ Using the kaggle command line tool:
 
 ## Training
 
-The script [src/train.py](blob/main/src/train.py) can be used to train networks available in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package. The following line will train a network on MNIST, provided the name of the network architecture and the number of epochs for the training:
+The script [src/train.py](src/train.py) can be used to train networks available in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package. The following line will train a network on MNIST, provided the name of the network architecture and the number of epochs for the training:
 
     python3 -u src/train.py --model_name <name> --epochs <num_epochs>
 
@@ -42,7 +42,7 @@ The following command displays a list of the network architectures available for
 
     python3 -u src/train_nn.py --help
 
-The script [scripts/batch_train.sh](blob/main/scripts/batch_train.sh) can be used to train several network architectures sequencially, including Resnet, Mobilenet or EfficientNet.
+The script [scripts/batch_train.sh](scripts/batch_train.sh) can be used to train several network architectures sequencially, including Resnet, Mobilenet or EfficientNet.
 
 ## Visualizing Results
 
@@ -58,11 +58,11 @@ Typically, the UI can be accessed to visualize the experiments by opening the fo
 
 ## Generating Kaggle Submissions
 
-After training a model with the _src/train.py_ script, the script [src/generate_submission.py](blob/main/src/generate_submission.py) can be used to generate the Kaggle submission file _submission.csv_:
+After training a model with the _src/train.py_ script, the script [src/generate_submission.py](src/generate_submission.py) can be used to generate the Kaggle submission file _submission.csv_:
 
     python3 -u src/generate_submission.py <model_file>
 
-The submission files can also be generated in bulk with the script [scripts/parse_results.sh](blob/main/scripts/parse_results.sh). It will not only produce submission files for all the networks trained with the _train.py_ script, but it will also produce the predictions for the ensemble method in the file _submission_ensemble.csv_.
+The submission files can also be generated in bulk with the script [scripts/parse_results.sh](scripts/parse_results.sh). It will not only produce submission files for all the networks trained with the _train.py_ script, but it will also produce the predictions for the ensemble method in the file _submission_ensemble.csv_.
 
 # Experimental Results
 
