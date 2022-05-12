@@ -3,7 +3,7 @@
 
 The code in this repository can be used to train any neural network provided in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package on the MNIST dataset.
 
-These networks are trained using Pytorch 1.10.1 and torchvision. The training uses the Adam optimizer with a standard parameter configuration. No data augmentation was used in the training. The code registers and tracks experiment results using MLflow.
+These networks are trained using Pytorch 1.10.1. The training uses the Adam optimizer with a standard parameter configuration. No data augmentation was used in the training. The code registers and tracks experiment results using MLflow.
 
 The repository also includes functionality to produce an ensemble predictor. This ensemble generates outputs combining predictions provided by multiple networks.
 
