@@ -5,7 +5,9 @@ The code in this repository can be used to train any neural network provided in 
 
 The repository also includes functionality to produce an ensemble predictor. This ensemble generates outputs combining predictions provided by multiple networks.
 
-The code also contains functionality to produce submissions to the [Digit Recognizer](https://www.kaggle.com/c/digit-recognizer) Kaggle competition for these prediction algorithms. The ensemble predictor produced with this code was able to reach [9% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
+The code also contains functionality to produce submissions to the [Digit Recognizer](https://www.kaggle.com/c/digit-recognizer) Kaggle competition for these prediction algorithms.
+
+Several experiments were carried over to evaluate these models, and generate submissions to the Kaggle competition. Please see [Experimental Results](#experimental-results) section below. The ensemble predictor produced with this code was able to reach [9% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
 
 # Code Usage
 
@@ -26,7 +28,7 @@ Using the kaggle command line tool:
 
 ## Training
 
-The following line will train a network to solve MNIST10, given the name of a network available in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package:
+The following line will train a network on MNIST, provided the name of a network available in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package, and the number of epochs for the training:
 
     python3 -u src/train.py --model_name <name> --epochs <num_epochs>
 
@@ -42,13 +44,13 @@ The script _scripts/batch_train.sh_ can be used to train several network archite
 
 ## Visualizing Results
 
-Each network training done with the _train.py_ script will register results (model, metrics, etc...) in an MLflow experiment, by default inside the _mlruns_ folder.
+Each execution of the script _src/train.py_ will register training results (model, metrics, etc...) in a separate MLflow experiment. By default, these experiments will be stored inside the _mlruns/0_ folder.
 
 These experiments can be visualized using the MLflow UI, which can be launched with the following command:
 
     mlflow ui
 
-Typically, the UI can be accessed by opening the following URL in any browser:
+Typically, the UI can be accessed to visualize the experiments by opening the following URL in any browser:
 
     http://127.0.0.1:5000/
 
@@ -66,7 +68,7 @@ The submission files can also be generated in bulk with the script _scripts/pars
 
 The first experiment evaluated the accuracy achievable by different network architectures in the Python model zoo.
 
-Resnet34, the network with top test accuracy, provided a 0.99403 accuracy in the _Digit Recognizer_ Kaggle competition, reaching position 267/2055 (top 12,99%) in the leaderboard.
+Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, reaching position 267/2055 (top 12,99%) in the leaderboard for the _Digit Recognizer_ Kaggle competition.
 
 | Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)&ast;  | Inference time (ms/batch) |
 |---                    |---            |---            |---        |
@@ -96,13 +98,15 @@ The second experiment evaluated the performance of a simple ensemble predictor. 
 
 This ensemble method yielded a 0.99535 accuracy, which reached position 176/2055 (top 8,56%) in the Kaggle leaderboard.
 
-The added inference time for this predictor would be 1,1358ms per batch, according to the results in the table above.
+An estimation for the combined inference time for this predictor would be 1,1358ms per batch, according to the results in the table above.
 
 ## Conclusions
 
-The ensemble method would be the best choice for applications where accuracy is the crucial factor. Meanwhile, for applications where prediction time is also a crucial factor, a network like _squeezenet_1_0_ can provide very competitive results compared to the performance of the ensemble.
+The ensemble method would be the best choice for applications where accuracy is the crucial factor.
 
-The accuracy for the ensemble is just 2% higher than the accuracy for squeezenet 1.0. Meanwhile, the processing time per batch is 12.4 times larger.
+Meanwhile, for applications where the computation cost or prediction time is also a crucial factor (e.g. mobile apps), a network like _squeezenet_1_0_ can provide very competitive results compared to the best result obtained by the ensemble.
+
+The accuracy for the ensemble is just 2% higher than the accuracy for _squeezenet 1.0_. Meanwhile, the processing time per batch is 12.4 times larger.
 
 ## Further Experiments
 
