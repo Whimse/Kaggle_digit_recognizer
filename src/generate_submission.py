@@ -1,6 +1,5 @@
 
 # Import external libraries
-import os
 import pandas as pd
 import argparse
 
@@ -9,7 +8,7 @@ import torch
 
 # Import data reading and other utilities
 from dataset import MNIST
-from utils import train, evaluate
+from utils import evaluate
 
 if __name__ == "__main__":
 
