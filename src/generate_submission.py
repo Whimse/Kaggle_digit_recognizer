@@ -27,7 +27,8 @@ if __name__ == "__main__":
 
     # Evaluate test set error
     test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
-    print(f'Val loss: {loss:.4f}\tVal error (%): {val_error:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})')
+    val_accuracy = (1. - val_error / 100.)
+    print(f'Val loss: {loss:.4f}\tVal accuracy (%): {val_accuracy:.4f}\tInference time (ms): {mean_syn:.4f} (std {std_syn:.4f})')
 
     # Save predictions for validation set
     test_set_preds, __, __, __, __ = evaluate(model, dataset.test_loader)

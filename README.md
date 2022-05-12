@@ -57,44 +57,51 @@ After training a model with _train_nn.py_, the script _test_nn.py_ can be used t
 
 # Experimental Results
 
-## Architecture Selection
+## Architecture Exploration
 
-The first experiment explored the accuracy achievable by different network architectures in the Python model zoo.
+The first experiment evaluated the accuracy achievable by different network architectures in the Python model zoo.
 
 Resnet34, the network with top test accuracy, provided a 0.99403 accuracy, reaching position 267/2055 (top 12,99%) in the Kagge leaderboard for the _Digit Recognizer_ competition.
 
 | Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)&ast;  | Inference time (ms/batch) |
-|---                    |---        |---|---|
-| resnet18              | 0.607     |           | 0.1555    |
-| resnet34              | *0.536*   | 0.99403   | 0.2880    |
-| mobilenet_v2          | *0.536*   |           | 0.1907    |
-| mobilenet_v3_small    | 1.893     |           | 0.1742    |
-| mobilenet_v3_large    | 0.738     | 0.99060   | 0.2421    |
-| squeezenet1_0         | 0.667     |           | 0.0913    |
-| squeezenet1_1         | 1.19      |           | *0.1010*  |
-| efficientnet_b0       | 0.655     |           | 0.3589    |
-| efficientnet_b3       | 1.024     |           | 0.6917    |
-| mnasnet0_5            | 21.18     | 0.78892   | 0.1429    |
-| mnasnet1_0            | 1.238     |           | 0.2218    |
+|---                    |---            |---            |---        |
+| resnet18              | 0.9945        |               | 0.1555    |
+| resnet34              | **0.9950**    | **0.99403**   | 0.2880    |
+| mobilenet_v2          | 0.9951        |               | 0.1907    |
+| mobilenet_v3_small    | 0.9815        |               | 0.1742    |
+| mobilenet_v3_large    | 0.9929        | 0.99060       | 0.2421    |
+| squeezenet1_0         | 0.9933        |               | **0.0913**|
+| squeezenet1_1         | 0.9886        |               | 0.1010    |
+| efficientnet_b0       | 0.9935        |               | 0.3589    |
+| efficientnet_b3       | 0.9905        |               | 0.6917    |
+| mnasnet0_5            | 0.7882        | 0.78892       | 0.1429    |
+| mnasnet1_0            | 0.9876        |               | 0.2218    |
 
 &ast; Some of the fields in this column could not be completed due to submission limit per day imposed by Kaggle.
 
-
 ## Ensemble Prediction
 
-The second experiment explored the performance of a simple ensemble predictor. For a given test sample, this method produces the most frequent prediction provided by the following networks:
-- mobilenet_v2
+The second experiment evaluated the performance of a simple ensemble predictor. For a given test sample, this method produces the most frequent prediction provided by the following networks:
 - resnet18
 - resnet34
+- mobilenet_v2
+- mobilenet_v3_large
 - squeezenet1_0
 - efficientnet_b0
-- mobilenet_v3_large
-This provided a 0.99535 accuracy, scaling up to position 176/2055 (top 8,56%) in the Kaggle leaderboard.
+
+This yielded a 0.99535 accuracy, which provided position 176/2055 (top 8,56%) in the Kaggle leaderboard.
+
+The added inference time for this predictor would be 1,1358ms per batch, according to the results in the table above.
+
+## Conclusions
+
+The ensemble method would be the best choice for applications where accuracy is the crucial factor. Meanwhile, for applications where prediction time is also a crucial factor, a network like _squeezenet_1_0_ can provide very competitive results compared to the performance of the ensemble.
+
+The accuracy for the ensemble is just 2% higher than the accuracy for squeezenet 1.0. Meanwhile, the processing time per batch is 12.4 times larger.
 
 ## Further Experiments
 
-The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additional network architectures could have been considered for the experiments. 
-Furthermore, other hyperparameters such as the optimization method or the learning rate could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
+The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additional network architectures could have been considered for the experiments. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
 
 Data augmentation was not used in these experiments, and it is a very effective way to [further increase the accuracy with image classification problems](https://machinelearningmastery.com/image-augmentation-deep-learning-keras/).
 

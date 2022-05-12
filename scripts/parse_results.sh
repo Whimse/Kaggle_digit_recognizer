@@ -6,7 +6,7 @@ for EXPERIMENT in mlruns/0/*/; do
     CODE=${CODE#mlruns/0/}
     CODE=${CODE:0:10}
     NAME=`cat $EXPERIMENT/tags/mlflow.runName`
-    INFERENCE_TIME=`python src/generate_submission.py "$EXPERIMENT"artifacts/model/data/model.pth 2>/dev/null | grep -e Inference | cut -d ":" -f 4`
+    INFERENCE_TIME=`python src/generate_submission.py "$EXPERIMENT"artifacts/model/data/model.pth 2>/dev/null | grep -e Inference`
     echo "$CODE"_"$NAME" inference time: $INFERENCE_TIME
     mv submission.csv submission_"$CODE"_"$NAME".csv
 done
