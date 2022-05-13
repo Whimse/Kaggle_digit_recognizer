@@ -80,12 +80,12 @@ Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, 
 | resnet18              | 0.9945        |               | 0.1555    |
 | resnet34              | **0.9950**    | **0.99403**   | 0.2880    |
 | mobilenet_v2          | 0.9949        |               | 0.1907    |
-| mobilenet_v3_small    | 0.9815        |               | 0.1742    |
+| mobilenet_v3_small    | 0.9815        | 0.97871       | 0.1742    |
 | mobilenet_v3_large    | 0.9929        | 0.99060       | 0.2421    |
-| squeezenet1_0         | 0.9933        |               | **0.0913**|
-| squeezenet1_1         | 0.9886        |               | 0.1010    |
-| efficientnet_b0       | 0.9935        |               | 0.3589    |
-| efficientnet_b3       | 0.9905        |               | 0.6917    |
+| squeezenet1_0         | 0.9933        | 0.99203       | **0.0913**|
+| squeezenet1_1         | 0.9886        | 0.98725       | 0.1010    |
+| efficientnet_b0       | 0.9935        | 0.99214       | 0.3589    |
+| efficientnet_b3       | 0.9905        | 0.98867       | 0.6917    |
 | mnasnet0_5            | 0.7882        | 0.78892       | 0.1429    |
 | mnasnet1_0            | 0.9876        |               | 0.2218    |
 
