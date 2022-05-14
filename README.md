@@ -11,6 +11,8 @@ The code also contains functionality to produce submissions to the [Digit Recogn
 
 Several experiments were carried over to evaluate these models, and generate submissions to the Kaggle competition. Please see [Experimental Results](#experimental-results) section below. The ensemble predictor produced with this code was able to reach [9% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
 
+[TOC]
+
 # Code Usage
 
 ## Setting up Work Environment
@@ -24,12 +26,6 @@ The execution of the training requires several packages, including Pytorch, Pand
 
     pip3 install -r requirements.txt --force-reinstall
 
-Alternatively, the training can be launched within the docker container provided in the source code. For that purpose, the docker image must be build first:
-
-    docker build . -t digit-recognizer
-
-The docker image will contain the Python version and all the packages required to run the training.
-
 ## Downloading data
 
 Using the kaggle command line tool:
@@ -38,6 +34,7 @@ Using the kaggle command line tool:
     unzip -d data digit-recognizer.zip
 
 ## Training
+### On Host
 
 The script [src/train.py](src/train.py) can be used to train networks available in the [torchvision.models](https://pytorch.org/vision/stable/models.html) package. The following line will train a network on MNIST, provided the name of the network architecture and the number of epochs for the training:
 
@@ -53,7 +50,15 @@ The following command displays a list of the network architectures available for
 
 The script [scripts/batch_train.sh](scripts/batch_train.sh) can be used to train several network architectures sequencially, including Resnet, Mobilenet or EfficientNet.
 
-Alternatively, the following command can be used to run the training from the docker container:
+### Inside Container
+
+Alternatively, the training can be launched within the docker container provided in the source code. For that purpose, the docker image must be build first:
+
+    docker build . -t digit-recognizer
+
+The docker image will contain the Python version and all the packages required to run the training.
+
+The following command can be used to run the training from the docker container:
 
     docker run --gpus all -v $(pwd):/mnt digit-recognizer python3 -u <training_command>
 
