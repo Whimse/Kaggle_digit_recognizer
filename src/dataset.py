@@ -4,13 +4,36 @@ from sklearn.model_selection import train_test_split
 
 # Import Torch
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, Dataset
+
+# Import augmentation functionality
+import kornia.augmentation as K
+
+class CustomTensorDataset(Dataset):
+    """TensorDataset with support of transforms.
+    """
+    def __init__(self, tensors, transform=None):
+        assert all(tensors[0].size(0) == tensor.size(0) for tensor in tensors)
+        self.tensors = tensors
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x = self.tensors[0][index]
+
+        if self.transform:
+            x = self.transform(x).squeeze()
+
+        y = self.tensors[1][index]
+
+        return x, y
+
+    def __len__(self):
+        return self.tensors[0].size(0)
+
 
 class MNIST:
     """ Class to generate MNIST dataset readers for the Digit Recognizer Kaggle competition """
-    def __init__(self):
-        # We could expose this as a class constructor parameter
-        batch_size = 64
+    def __init__(self, batch_size = 64, augment=True):
 
         # Read data from files
         input_folder_path = "../data/"
@@ -31,13 +54,18 @@ class MNIST:
         val_images = val_images.reshape(val_images.shape[0], 28, 28)
         test_images = test_images.reshape(test_images.shape[0], 28, 28)
 
+        # Image augmentation transformation
+        transform = torch.nn.Sequential(
+            K.RandomAffine(degrees=20, translate=(0.1, 0.1), scale=(0.8, 1.2), shear=(-15,15), p=1.0),
+            ) if augment else None
+
         # Normalize and convert to tensor
         train_images_tensor = torch.tensor(train_images)/255.0
         train_labels_tensor = torch.tensor(train_labels)
-        train_tensor = TensorDataset(train_images_tensor, train_labels_tensor)
+        train_tensor = CustomTensorDataset((train_images_tensor, train_labels_tensor), transform=transform)
         val_images_tensor = torch.tensor(val_images)/255.0
         val_labels_tensor = torch.tensor(val_labels)
-        val_tensor = TensorDataset(val_images_tensor, val_labels_tensor)
+        val_tensor = CustomTensorDataset((val_images_tensor, val_labels_tensor))
         test_images_tensor = torch.tensor(test_images)/255.0
 
         # Generate Pytorch data loaders

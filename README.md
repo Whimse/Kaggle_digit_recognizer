@@ -11,8 +11,6 @@ The code also contains functionality to produce submissions to the [Digit Recogn
 
 Several experiments were carried over to evaluate these models, and generate submissions to the Kaggle competition. Please see [Experimental Results](#experimental-results) section below. The ensemble predictor produced with this code was able to reach [9% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
 
-[TOC]
-
 # Code Usage
 
 ## Setting up Work Environment

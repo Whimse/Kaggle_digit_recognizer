@@ -22,12 +22,17 @@ if __name__ == "__main__":
     # Process command line parameters
     parser = argparse.ArgumentParser(description='Train network for MNIST')
     parser.add_argument('--model_name', choices=dir(models), default='resnet18', help='Model name')
-    parser.add_argument('--pretrained', type=bool, default=True, help='Load pretrained weights')
+    parser.add_argument('--augment', action='store_true', help='Use data augmentation')
+    parser.add_argument('--no-augment', dest='augment', action='store_false')
+    parser.set_defaults(augment=True)
+    parser.add_argument('--pretrained', action='store_true', help='Load pretrained weights')
+    parser.add_argument('--no-pretrained', dest='pretrained', action='store_false')
+    parser.set_defaults(pretrained=True)
     parser.add_argument('--epochs', type=int, default=1, help='Number of epochs to perform training')
     args = parser.parse_args()
 
     # Config parameters
-    print("Args:", args.model_name, args.epochs, args.pretrained)
+    print("Args:", args)
 
     # Detect GPU
     if torch.cuda.is_available():
@@ -39,7 +44,7 @@ if __name__ == "__main__":
     print("CuDNN enabled:", torch.backends.cudnn.enabled)
 
     # Dataset
-    dataset = MNIST()
+    dataset = MNIST(batch_size = 64, augment=args.augment)
 
     # Model
     model = getattr(models, args.model_name)(pretrained=args.pretrained)

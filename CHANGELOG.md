@@ -1,6 +1,7 @@
 Release 1.1
 - Completed test results in section [architecture exploration](#architecture-exploration) with metrics provided by Kaggle
 - Added Dockerfile to allow running containerized training
+- Added augmentation functionality
 
 Release 1.0
 - Initialized code from notebook codebase at Kaggle: https://www.kaggle.com/code/franklemuchahary/mnist-digit-recognition-using-pytorch/notebook
