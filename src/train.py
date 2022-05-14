@@ -25,9 +25,9 @@ if __name__ == "__main__":
     parser.add_argument('--augment', action='store_true', help='Use data augmentation')
     parser.add_argument('--no-augment', dest='augment', action='store_false')
     parser.set_defaults(augment=True)
-    parser.add_argument('--pretrained', action='store_true', help='Load pretrained weights')
-    parser.add_argument('--no-pretrained', dest='pretrained', action='store_false')
-    parser.set_defaults(pretrained=True)
+    parser.add_argument('--pretrain', action='store_true', help='Load pretrain weights')
+    parser.add_argument('--no-pretrain', dest='pretrain', action='store_false')
+    parser.set_defaults(pretrain=True)
     parser.add_argument('--epochs', type=int, default=1, help='Number of epochs to perform training')
     args = parser.parse_args()
 
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     dataset = MNIST(batch_size = 64, augment=args.augment)
 
     # Model
-    model = getattr(models, args.model_name)(pretrained=args.pretrained)
+    model = getattr(models, args.model_name)(pretrained=args.pretrain)
 
     # Training config
     criterion = nn.CrossEntropyLoss()
@@ -62,7 +62,9 @@ if __name__ == "__main__":
     # Training loop
     best_val_error = 100.
 
-    with mlflow.start_run(run_name=args.model_name):
+    augment_str = "aug" if args.augment else ""
+    pretrain_str = "pre" if args.pretrain else ""
+    with mlflow.start_run(run_name=f'{args.model_name}_{augment_str}_{pretrain_str}'):
         for num_epoch in range(args.epochs):
             train(model, criterion, optimizer, lr_scheduler, dataset.train_loader, num_epoch)
             test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)
