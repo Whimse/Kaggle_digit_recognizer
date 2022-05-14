@@ -24,6 +24,12 @@ The execution of the training requires several packages, including Pytorch, Pand
 
     pip3 install -r requirements.txt --force-reinstall
 
+Alternatively, the training can be launched within the docker container provided in the source code. For that purpose, the docker image must be build first:
+
+    docker build . -t digit-recognizer
+
+The docker image will contain the Python version and all the packages required to run the training.
+
 ## Downloading data
 
 Using the kaggle command line tool:
@@ -43,9 +49,22 @@ Example:
 
 The following command displays a list of the network architectures available for training:
 
-    python3 -u src/train_nn.py --help
+    python3 -u src/train.py --help
 
 The script [scripts/batch_train.sh](scripts/batch_train.sh) can be used to train several network architectures sequencially, including Resnet, Mobilenet or EfficientNet.
+
+Alternatively, the following command can be used to run the training from the docker container:
+
+    docker run --gpus all -v $(pwd):/mnt digit-recognizer python3 -u <training_command>
+
+For example, the following command trains a single network:
+
+    docker run --gpus all -v $(pwd):/mnt digit-recognizer python3 -u ./src/train.py --model_name resnet18 --epochs 10
+
+And this one will run the batch training:
+
+    docker run --gpus all -v $(pwd):/mnt digit-recognizer ./scripts/batch_train.sh
+
 
 ## Visualizing Results
 
@@ -75,11 +94,11 @@ The first experiment evaluated the accuracy achievable by different network arch
 
 Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, reaching position 267/2055 (top 12,99%) in the leaderboard for the _Digit Recognizer_ Kaggle competition.
 
-| Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)&ast;  | Inference time (ms/batch) |
+| Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)  | Inference time (ms/batch) |
 |---                    |---            |---            |---        |
-| resnet18              | 0.9945        |               | 0.1555    |
+| resnet18              | 0.9945        | 0.99398       | 0.1555    |
 | resnet34              | **0.9950**    | **0.99403**   | 0.2880    |
-| mobilenet_v2          | 0.9949        |               | 0.1907    |
+| mobilenet_v2          | 0.9949        | 0.99342       | 0.1907    |
 | mobilenet_v3_small    | 0.9815        | 0.97871       | 0.1742    |
 | mobilenet_v3_large    | 0.9929        | 0.99060       | 0.2421    |
 | squeezenet1_0         | 0.9933        | 0.99203       | **0.0913**|
@@ -87,9 +106,7 @@ Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, 
 | efficientnet_b0       | 0.9935        | 0.99214       | 0.3589    |
 | efficientnet_b3       | 0.9905        | 0.98867       | 0.6917    |
 | mnasnet0_5            | 0.7882        | 0.78892       | 0.1429    |
-| mnasnet1_0            | 0.9876        |               | 0.2218    |
-
-&ast; Some of the fields in this column could not be completed due to submission limit per day imposed by Kaggle.
+| mnasnet1_0            | 0.9876        | 0.98467       | 0.2218    |
 
 ## Ensemble Prediction
 
