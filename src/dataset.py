@@ -54,9 +54,13 @@ class MNIST:
         val_images = val_images.reshape(val_images.shape[0], 28, 28)
         test_images = test_images.reshape(test_images.shape[0], 28, 28)
 
+        ad = 0.02 # Strength of affine transformations
+
         # Image augmentation transformation
         transform = torch.nn.Sequential(
-            K.RandomAffine(degrees=20, translate=(0.1, 0.1), scale=(0.8, 1.2), shear=(-15,15), p=1.0),
+            K.RandomAffine(degrees=200.*ad, p=0.5),
+            K.RandomAffine(degrees=0, translate=(ad, ad), p=0.5),
+            K.RandomAffine(degrees=0, scale=(1.-ad, 1.+ad), p=0.5),
             ) if augment else None
 
         # Normalize and convert to tensor
@@ -67,6 +71,15 @@ class MNIST:
         val_labels_tensor = torch.tensor(val_labels)
         val_tensor = CustomTensorDataset((val_images_tensor, val_labels_tensor))
         test_images_tensor = torch.tensor(test_images)/255.0
+
+        # Debug code to store augmented images to disk
+        '''
+        import cv2
+        index=4
+        for i in range(10):
+            cv2.imwrite("img_"+str(index)+"_"+str(i)+".png", (128*train_tensor[index][0]).cpu().numpy())
+        quit()
+        '''
 
         # Generate Pytorch data loaders
         self.train_loader = DataLoader(train_tensor, batch_size=batch_size, num_workers=2, shuffle=True)

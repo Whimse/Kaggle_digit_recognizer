@@ -24,11 +24,12 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', choices=dir(models), default='resnet18', help='Model name')
     parser.add_argument('--augment', action='store_true', help='Use data augmentation')
     parser.add_argument('--no-augment', dest='augment', action='store_false')
-    parser.set_defaults(augment=True)
+    parser.set_defaults(augment=False)
     parser.add_argument('--pretrain', action='store_true', help='Load pretrain weights')
     parser.add_argument('--no-pretrain', dest='pretrain', action='store_false')
     parser.set_defaults(pretrain=True)
-    parser.add_argument('--epochs', type=int, default=1, help='Number of epochs to perform training')
+    parser.add_argument('--epochs', type=int, default=40, help='Number of epochs to perform training')
+    parser.add_argument('--l2_reg', type=float, default=0.001, help='L2 weight penalty')    
     args = parser.parse_args()
 
     # Config parameters
@@ -51,7 +52,7 @@ if __name__ == "__main__":
 
     # Training config
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(params=model.parameters(), lr=0.001)
+    optimizer = optim.Adam(params=model.parameters(), lr=0.001, weight_decay=args.l2_reg)
     lr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.75)
 
     # Move to adequate processor
@@ -64,7 +65,7 @@ if __name__ == "__main__":
 
     augment_str = "aug" if args.augment else ""
     pretrain_str = "pre" if args.pretrain else ""
-    with mlflow.start_run(run_name=f'{args.model_name}_{augment_str}_{pretrain_str}'):
+    with mlflow.start_run(run_name=f'{args.model_name}_{augment_str}_{pretrain_str}_{args.l2_reg}'):
         for num_epoch in range(args.epochs):
             train(model, criterion, optimizer, lr_scheduler, dataset.train_loader, num_epoch)
             test_set_preds, loss, val_error, mean_syn, std_syn = evaluate(model, dataset.val_loader)

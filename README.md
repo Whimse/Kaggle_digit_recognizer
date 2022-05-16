@@ -93,14 +93,14 @@ The submission files can also be generated in bulk with the script [scripts/pars
 
 ## Architecture Exploration
 
-The first experiment evaluated the accuracy achievable by different network architectures in the Python model zoo.
-
-Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, reaching position 267/2055 (top 12,99%) in the leaderboard for the _Digit Recognizer_ Kaggle competition.
+The first experiment evaluated the accuracy achievable by different network architectures in the Python model zoo. The results can be seen in the following table:
 
 | Architecture  | Validation Accuracy  | Test Accuracy (Kaggle)  | Inference time (ms/batch) |
 |---                    |---            |---            |---        |
 | resnet18              | 0.9945        | 0.99398       | 0.1555    |
-| resnet34              | **0.9950**    | **0.99403**   | 0.2880    |
+| resnet34              | **0.9950**    | 0.99403       | 0.2880    |
+| resnet50              | 0.9946        | **0.99442**   | 0.5511    |
+| resnet101             | 0.9942        | 0.99271       | 0.9370    |
 | mobilenet_v2          | 0.9949        | 0.99342       | 0.1907    |
 | mobilenet_v3_small    | 0.9815        | 0.97871       | 0.1742    |
 | mobilenet_v3_large    | 0.9929        | 0.99060       | 0.2421    |
@@ -110,6 +110,8 @@ Resnet34, the network with top test accuracy, provided a 0.99403 test accuracy, 
 | efficientnet_b3       | 0.9905        | 0.98867       | 0.6917    |
 | mnasnet0_5            | 0.7882        | 0.78892       | 0.1429    |
 | mnasnet1_0            | 0.9876        | 0.98467       | 0.2218    |
+
+Resnet50, the network with top test accuracy, provided a 0.99442 test accuracy, reaching position 254/2055 (top 12,36%) in the leaderboard for the _Digit Recognizer_ Kaggle competition.
 
 ## Ensemble Prediction
 
@@ -124,6 +126,30 @@ The second experiment evaluated the performance of a simple ensemble predictor. 
 This ensemble method yielded a 0.99535 accuracy, which reached position 176/2055 (top 8,56%) in the Kaggle leaderboard.
 
 An estimation for the combined inference time for this predictor would be 1,1358ms per batch, according to the results in the table above.
+
+## Reducing Overfitting
+
+Most networks used in these experiments include ways to reduce overfitting (e.g. batch normalization, dropout). To further try and reduce overfitting two additional techniques were tested in the training: image augmentation and weight decay.
+
+Since all images in the MNIST dataset are binary BW, there is no value in trying color or brigthness augmentations. Hence,slight geometric transformations are the most adequate for a dataset such as MNIST.
+
+For an initial test of image augmentations it is convenient to use mild transformations. Hence, for these experiments we applied random rotations within a range of [-4, 4] degrees, scaling and translation with 2% of variation in image size. Examples of this transformation can be seen as follows:
+
+![augmented_0](img/augmented_0.gif)
+![augmented_1](img/augmented_1.gif)
+![augmented_2](img/augmented_2.gif)
+![augmented_3](img/augmented_3.gif)
+![augmented_4](img/augmented_4.gif)
+![augmented_5](img/augmented_5.gif)
+![augmented_6](img/augmented_6.gif)
+![augmented_7](img/augmented_7.gif)
+![augmented_8](img/augmented_8.gif)
+![augmented_9](img/augmented_9.gif)
+
+Using the command line parameter _--augment_ the training script will apply these transformations during training. Besides affine transformations, the training can also apply weight decay by setting a non-zero value in the _--l2_reg_ command line parameter.
+
+The results of applying these two techniques to reduce overfitting can be seen in the following table:
+
 
 ## Conclusions
 
