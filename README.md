@@ -148,8 +148,28 @@ For an initial test of image augmentations it is convenient to use mild transfor
 
 Using the command line parameter _--augment_ the training script will apply these transformations during training. Besides affine transformations, the training can also apply weight decay by setting a non-zero value in the _--l2_reg_ command line parameter.
 
-The results of applying these two techniques to reduce overfitting can be seen in the following table:
+The validation errors obtained by applying these two techniques can be seen in the following table (where WD=weight decay, AUG=agumentations). Highlighted in bold typeface are experiments that improved w.r.t. the baseline:
 
+| Architecture          | Baseline  | Baseline+WD   | Baseline+WD+AUG   |
+|---                    |---        |---            |---                |
+| resnet18	            | 0.9945	| **0.9948**	| **0.9963**	    |
+| resnet34	            | 0.9950	| **0.9951**	| **0.9956**	    |
+| resnet50	            | 0.9946	| **0.9950**	| **0.9954**	    |
+| resnet101	            | 0.9942	| **0.9945**	| **0.9956**	    |
+| efficientnet_b0	    | 0.9935	| 0.9871	    | 0.9931	        |
+| mobilenet_v3_small	| 0.9815	| **0.9817**	| **0.9838**	    |
+| mobilenet_v3_large	| 0.9929	| 0.9915	    | 0.9921	        |
+| mobilenet_v2	        | 0.9951	| 0.9932	    | 0.9945	        |
+
+With these updated results we evaluated the performance of version 2 of the ensemble. This new version uses the following updated networks that provided the best results after these experiments:
+- resnet18 (Baseline+WD+AUG)
+- resnet34 (Baseline+WD+AUG)
+- mobilenet_v2 (Baseline)
+- mobilenet_v3_large (Baseline)
+- squeezenet1_0 (Baseline)
+- efficientnet_b0 (Baseline)
+
+This new ensemble yielded an accuracy of 0.99550. It improves the performance of V1 (0.99535_), climbing some positions from 176/2055 to 162/2055 (top 7.88%) in the Kaggle leaderboard.
 
 ## Conclusions
 
@@ -162,7 +182,5 @@ The accuracy for the ensemble is just 2% higher than the accuracy for _squeezene
 ## Further Experiments
 
 The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additional network architectures could have been considered for the experiments. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
-
-Data augmentation was not used in these experiments, and it is a very effective way to [further increase the accuracy with image classification problems](https://machinelearningmastery.com/image-augmentation-deep-learning-keras/).
 
 [More sophisticated approaches](https://paperswithcode.com/sota/image-classification-on-mnist) have been also proposed in the academic literature, reaching accuracies in the range of 0,9991 for the digit classification problem with MNIST. Any of these ideas could be explored to further push the prediction accuracy of the models.
