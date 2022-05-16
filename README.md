@@ -123,7 +123,7 @@ The second experiment evaluated the performance of a simple ensemble predictor. 
 - squeezenet1_0
 - efficientnet_b0
 
-This ensemble method yielded a 0.99535 accuracy, which reached position 176/2055 (top 8,56%) in the Kaggle leaderboard.
+This ensemble yielded a test accuracy of 0.99535 according to Kaggle, reaching position 176/2055 (top 8,56%) in the Kaggle leaderboard.
 
 An estimation for the combined inference time for this predictor would be 1,1358ms per batch, according to the results in the table above.
 
@@ -169,7 +169,7 @@ With these updated results we evaluated the performance of version 2 of the ense
 - squeezenet1_0 (Baseline)
 - efficientnet_b0 (Baseline)
 
-This new ensemble yielded an accuracy of 0.99550. It improves the performance of V1 (0.99535_), climbing some positions from 176/2055 to 162/2055 (top 7.88%) in the Kaggle leaderboard.
+This new ensemble yielded a test accuracy of 0.99550 according to Kaggle. It improves the performance of V1 (0.99535), climbing some positions from 176/2055 to 162/2055 (top 7.88%) in the Kaggle leaderboard.
 
 ## Conclusions
 
