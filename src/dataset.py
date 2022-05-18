@@ -4,10 +4,8 @@ from sklearn.model_selection import train_test_split
 
 # Import Torch
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
-# Import augmentation functionality
-import kornia.augmentation as K
 
 class CustomTensorDataset(Dataset):
     """TensorDataset with support of transforms.
@@ -31,9 +29,9 @@ class CustomTensorDataset(Dataset):
         return self.tensors[0].size(0)
 
 
-class MNIST:
+class Kaggle_Digit_Recognizer:
     """ Class to generate MNIST dataset readers for the Digit Recognizer Kaggle competition """
-    def __init__(self, batch_size = 64, augment=True):
+    def __init__(self, transform=None):
 
         # Read data from files
         input_folder_path = "../data/"
@@ -49,39 +47,18 @@ class MNIST:
                                                                             stratify=train_labels, random_state=123,
                                                                             test_size=0.20)
 
-        # Reshape images
-        train_images = train_images.reshape(train_images.shape[0], 28, 28)
-        val_images = val_images.reshape(val_images.shape[0], 28, 28)
-        test_images = test_images.reshape(test_images.shape[0], 28, 28)
+        # Reshape and normalize images
+        train_images = train_images.reshape(train_images.shape[0], 28, 28)/255.0
+        val_images = val_images.reshape(val_images.shape[0], 28, 28)/255.0
+        test_images = test_images.reshape(test_images.shape[0], 28, 28)/255.0
 
-        ad = 0.02 # Strength of affine transformations
-
-        # Image augmentation transformation
-        transform = torch.nn.Sequential(
-            K.RandomAffine(degrees=200.*ad, p=0.5),
-            K.RandomAffine(degrees=0, translate=(ad, ad), p=0.5),
-            K.RandomAffine(degrees=0, scale=(1.-ad, 1.+ad), p=0.5),
-            ) if augment else None
-
-        # Normalize and convert to tensor
-        train_images_tensor = torch.tensor(train_images)/255.0
+        # Convert images to Pytorch tensor
+        train_images_tensor = torch.tensor(train_images)
         train_labels_tensor = torch.tensor(train_labels)
-        train_tensor = CustomTensorDataset((train_images_tensor, train_labels_tensor), transform=transform)
-        val_images_tensor = torch.tensor(val_images)/255.0
+        self.train = CustomTensorDataset((train_images_tensor, train_labels_tensor), transform=transform)
+
+        val_images_tensor = torch.tensor(val_images)
         val_labels_tensor = torch.tensor(val_labels)
-        val_tensor = CustomTensorDataset((val_images_tensor, val_labels_tensor))
-        test_images_tensor = torch.tensor(test_images)/255.0
+        self.val = CustomTensorDataset((val_images_tensor, val_labels_tensor))
 
-        # Debug code to store augmented images to disk
-        '''
-        import cv2
-        index=4
-        for i in range(10):
-            cv2.imwrite("img_"+str(index)+"_"+str(i)+".png", (128*train_tensor[index][0]).cpu().numpy())
-        quit()
-        '''
-
-        # Generate Pytorch data loaders
-        self.train_loader = DataLoader(train_tensor, batch_size=batch_size, num_workers=2, shuffle=True)
-        self.val_loader = DataLoader(val_tensor, batch_size=batch_size, num_workers=2, shuffle=False)
-        self.test_loader = DataLoader(test_images_tensor, batch_size=batch_size, num_workers=2, shuffle=False)
+        self.test = torch.tensor(test_images)

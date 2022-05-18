@@ -29,9 +29,9 @@ if __name__ == "__main__":
         most_frequent_values.append(np.bincount(row).argmax())
 
     # Print some of the non-coherent predictions in the ensemble and their consensuated prediction
-    idxs = np.where(np.any(np.tile(predictions[:,0], (6,1)).transpose() != predictions, axis=1))[0]
-    for idx in idxs[:10]:
-        print(idx, predictions[idx], most_frequent_values[idx])
+    #idxs = np.where(np.any(np.tile(predictions[:,0], (6,1)).transpose() != predictions, axis=1))[0]
+    #for idx in idxs[:10]:
+    #    print(idx, predictions[idx], most_frequent_values[idx])
 
     # Save consensuated predictions
     submission_df = pd.read_csv("./data/sample_submission.csv")

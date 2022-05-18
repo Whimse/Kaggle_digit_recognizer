@@ -17,12 +17,13 @@ Several experiments were carried over to evaluate these models, and generate sub
 
 The code was tested with Python version 3.6.9. A virtual environment to use the code can be created with the following command line, and then activated:
 
-    python3 -m virtualenv Kaggle_Digit_Recognizer --python=/usr/bin/python3.6
+    python3 -m virtualenv Kaggle_Digit_Recognizer --python=/usr/bin/python3.8
     source Kaggle_Digit_Recognizer/bin/activate
+    python -m pip install --upgrade pip
 
 The execution of the training requires several packages, including Pytorch, Pandas or Kaggle. These can be automatically installed with the following command line:
 
-    pip3 install -r requirements.txt --force-reinstall
+    pip install -r requirements.txt --force-reinstall --default-timeout=9999
 
 ## Downloading data
 
