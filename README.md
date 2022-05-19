@@ -9,7 +9,7 @@ The repository also includes functionality to produce an ensemble predictor. Thi
 
 The code also contains functionality to produce submissions to the [Digit Recognizer](https://www.kaggle.com/c/digit-recognizer) Kaggle competition for these prediction algorithms.
 
-Several experiments were carried over to evaluate these models, and generate submissions to the Kaggle competition. Please see [Experimental Results](#experimental-results) section below. The ensemble predictor produced with this code was able to reach [5% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
+Several experiments were carried over to evaluate these models, and generate submissions to the Kaggle competition. Please see [Experimental Results](#experimental-results) section below. The ensemble predictor produced with this code was able to reach [6% top position in the leaderboard of the Kaggle competition](https://www.kaggle.com/reanor/competitions?tab=active).
 
 # Code Usage
 
