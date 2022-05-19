@@ -178,7 +178,7 @@ Increasing the strength of the augmentations yielded better results. The followi
 
 | Architecture          | Augmentation  | Validation error  | Test error (Kaggle)   |
 |---                    |---            |---                | ---                   |
-| resnet18	            | 2%	        | 0.9963            | 0.99492               |
+| resnet18	            | 2%	        | ***0.9963***      | 0.99492               |
 | resnet50	            | 8%	        | 0.9961            | **0.99578**           |
 | resnet101	            | 2%	        | 0.9956            | 0.99414               |
 | resnet101	            | 8%	        | 0.9956            | **0.99578**           |
@@ -211,7 +211,9 @@ Strictly speaking the ensemble proposed is not a bagging method, since we train 
 The results obtained by the ensemble could improve, by reducing its variance, if we randomize the training set for training each individual network.
 
 ### Hyperparameter Optimization
-The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
+The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments.
+
+Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
 
 ### Pseudo-labeling, Teacher-student Training
 We could distill the knowledge in the ensemble, to train a lighter network with similar prediction capabilities. In machine learning projects it is common to have access to a large amount of unabeled data. Acquiring images typically requires way less resources than producing annotation for them.
