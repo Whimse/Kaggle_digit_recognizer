@@ -203,13 +203,20 @@ The accuracy for the ensemble is just 2% higher than the accuracy for _squeezene
 
 ## Further Experiments
 
+### Randomizing Training/Validation Partition
+Bagging methods train multiple predictors on random partitions of the training data, and average the output to produce a joint prediction with low variance.
+
+Strictly speaking the ensemble proposed is not a bagging method, since we train the ensembles on the same data all the time (see [here](f51eb948fdd7142e3ae042ddb44d9c3e1bb3a52d/src/dataset.py#L26)).
+
+The results obtained by the ensemble could improve, by reducing its variance, if we randomize the training set for training each individual network.
+
 ### Hyperparameter Optimization
 The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
 
 ### Pseudo-labeling, Teacher-student Training
-In machine learning projects it is typical to have access to a large amount of unabeled data. Acquiring images typically requires way less resources than producing annotation for them.
+We could distill the knowledge in the ensemble, to train a lighter network with similar prediction capabilities. In machine learning projects it is common to have access to a large amount of unabeled data. Acquiring images typically requires way less resources than producing annotation for them.
 
-If we had more unlabeled images, the ensemble could be used to produce pseudo-labels for those samples. Then we can distill the ensemble into a lightweight network such as squeezenet with a teacher-student training, where the ensemble provides soft labels and annotations for the additional unlabeled data.
+In that case, the ensemble could produce pseudo-labels for those samples. Then we could use those images, and the original training set, to train a lightweight network such as squeezenet. This is similar to a teacher-student training, where the ensemble provides soft labels and annotations for the additional unlabeled data.
 
-### Further Readings
-[More sophisticated approaches](https://paperswithcode.com/sota/image-classification-on-mnist) have been also proposed in the academic literature, reaching accuracies in the range of 0,9991 for the digit classification problem with MNIST. Any of these ideas could be explored to further push the prediction accuracy of the models.
+### Semi-supervised Training
+We could also use additional unlabeled images in a semi-supervised training. In this approach we use the training set for supervised training, and the test images for self-supervision. One way to do self-supervision is to apply random transformations (augmentations) on an image, and train the network to produce the same prediction for all the different versions of that image.
