@@ -162,6 +162,8 @@ The validation errors obtained by applying these two techniques can be seen in t
 | mobilenet_v3_large	| 0.9929	| 0.9915	    | 0.9921	        |
 | mobilenet_v2	        | 0.9951	| 0.9932	    | 0.9945	        |
 
+*(accuracies in **bold** typeface improve baseline results)*
+
 With these updated results we evaluated the performance of version 2 of the ensemble. This new version uses the following updated networks that provided the best results after these experiments:
 - resnet18 (Baseline+WD+AUG)
 - resnet34 (Baseline+WD+AUG)
