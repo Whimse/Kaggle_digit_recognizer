@@ -15,7 +15,7 @@ Several experiments were carried over to evaluate these models, and generate sub
 
 ## Setting up Work Environment
 
-The code was tested with Python version 3.6.9. A virtual environment to use the code can be created with the following command line, and then activated:
+The code was tested with Python version 3.8. A virtual environment to use the code can be created with the following command line, and then activated:
 
     python3 -m virtualenv Kaggle_Digit_Recognizer --python=/usr/bin/python3.8
     source Kaggle_Digit_Recognizer/bin/activate
@@ -172,16 +172,44 @@ With these updated results we evaluated the performance of version 2 of the ense
 
 This new ensemble yielded a test accuracy of 0.99550 according to Kaggle. It improves the performance of V1 (0.99535), climbing some positions from 176/2055 to 162/2055 (top 7.88%) in the Kaggle leaderboard.
 
+## Final experiments
+
+Increasing the strength of the augmentations yielded better results. The following table shows the top 10 experiments that provided the best validation accuracy:
+
+| Architecture          | Augmentation  | Validation error  | Test error (Kaggle)   |
+|---                    |---            |---                | ---                   |
+| resnet18	            | 2%	        | 0.9963            | 0.99492               |
+| resnet50	            | 8%	        | 0.9961            | **0.99578**           |
+| resnet101	            | 2%	        | 0.9956            | 0.99414               |
+| resnet101	            | 8%	        | 0.9956            | **0.99578**           |
+| resnet34	            | 2%            | 0.9956            | |
+| resnet50	            | 2%	        | 0.9954            | |
+| resnet34      	    | 8%	        | 0.9952            | |
+| mobilenet_v2          | 0%	        | 0.9951            | |
+| resnet34	            | 0%	        | 0.9950            | |
+| resnet18	            | 8%        	| 0.9948            | |
+
+The top network according to validation error (resnet18, 2% augmentation strength) reached position 206/2055 (10%) in the Kaggle competition.
+
+The top network to test error evaluated by Kaggle (resnet50 with 8% strength) reached position 140/2055 (top 6.8%) in the competition.
+
+The ensemble of these top 10 predictors provided a test error of 0.99628 according to Kaggle, reaching position 110/2055 (top 5.3%).
+
 ## Conclusions
 
-The ensemble method would be the best choice for applications where accuracy is the crucial factor.
-
-Meanwhile, for applications where the computation cost or prediction time is also a crucial factor (e.g. mobile apps), a network like _squeezenet_1_0_ can provide very competitive results compared to the best result obtained by the ensemble.
+The ensemble predictor would be the best choice for applications where accuracy is the crucial factor. Meanwhile, for applications where the computation cost or prediction time is also a crucial factor (e.g. mobile apps), a network like _squeezenet_1_0_ can provide very competitive results compared to the best result obtained by the ensemble.
 
 The accuracy for the ensemble is just 2% higher than the accuracy for _squeezenet 1.0_. Meanwhile, the processing time per batch is 12.4 times larger.
 
 ## Further Experiments
 
-The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additional network architectures could have been considered for the experiments. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
+### Hyperparameter Optimization
+The first experiment tried to optimize the accuracy by exploring different choices for the network architecture. Additionally, other hyperparameters such as the optimization method, or the learning rate, could have been optimized in the experiments. Training longer with SGD with a more conservative LR decay or larger batch sizes can typically provide improvements in accuracy.
 
+### Pseudo-labeling, Teacher-student Training
+In machine learning projects it is typical to have access to a large amount of unabeled data. Acquiring images typically requires way less resources than producing annotation for them.
+
+If we had more unlabeled images, the ensemble could be used to produce pseudo-labels for those samples. Then we can distill the ensemble into a lightweight network such as squeezenet with a teacher-student training, where the ensemble provides soft labels and annotations for the additional unlabeled data.
+
+### Further Readings
 [More sophisticated approaches](https://paperswithcode.com/sota/image-classification-on-mnist) have been also proposed in the academic literature, reaching accuracies in the range of 0,9991 for the digit classification problem with MNIST. Any of these ideas could be explored to further push the prediction accuracy of the models.
