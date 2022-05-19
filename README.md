@@ -206,7 +206,7 @@ The accuracy for the ensemble is just 2% higher than the accuracy for _squeezene
 ### Randomizing Training/Validation Partition
 Bagging methods train multiple predictors on random partitions of the training data, and average the output to produce a joint prediction with low variance.
 
-Strictly speaking the ensemble proposed is not a bagging method, since we train the ensembles on the same data all the time (see [here](f51eb948fdd7142e3ae042ddb44d9c3e1bb3a52d/src/dataset.py#L26)).
+Strictly speaking the ensemble proposed is not a bagging method, since we train the ensembles on the same data all the time (see [here](https://github.com/Whimse/Kaggle_digit_recognizer/blob/f51eb948fdd7142e3ae042ddb44d9c3e1bb3a52d/src/dataset.py#L26)).
 
 The results obtained by the ensemble could improve, by reducing its variance, if we randomize the training set for training each individual network.
 
